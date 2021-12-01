@@ -5,7 +5,7 @@
       <router-link to="/profs">Professeurs référents</router-link> |
       <router-link to="/admin">Administration</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
