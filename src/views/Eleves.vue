@@ -25,9 +25,12 @@
         :data-source="entrepriseOptions"
         @select="handleSelectEntre"
       ></vue-infinite-autocomplete>
-      <div>
+      <div v-if="!newEntreprise">
         <span>Vous ne trouvez pas votre entreprise ?</span
-        ><input type="button" value="Ajouter" />
+        ><input type="button" value="Ajouter" @click="createEntreprise()"/>
+      </div>
+      <div v-else>
+        <span>FormEntreprise</span>
       </div>
     </div>
     <div v-if="selectedEntreprise != null">
@@ -36,12 +39,15 @@
         :data-source="responsableOptions"
         @select="handleSelectResp"
       ></vue-infinite-autocomplete>
-      <div>
+      <div v-if="!newResponsable">
         <span>Vous ne trouvez pas le responsable ?</span
-        ><input type="button" value="Ajouter" />
+        ><input type="button" value="Ajouter" @click="createResponsable()"/>
+      </div>
+      <div v-else>
+        <span>FormResp</span>
       </div>
     </div>
-    <div v-if="selectedResponsable != null">
+    <div v-if="selectedResponsable != null || newResponsable">
       <input type="button" value="Créer" @click="createStage()" />
     </div>
   </div>
@@ -70,6 +76,8 @@ export default {
       selectedPeriode: null,
       selectedPeriodeId: null,
       periodes: null,
+      newResponsable : false,
+      newEntreprise : false
     };
   },
   components: {
@@ -93,6 +101,20 @@ export default {
       this.responsableId = selectedValue.id;
     },
     createStage() {
+      if(this.newEntreprise){
+        axios
+        .post("http://localhost/convention/createEnterprise.php", this.selectedEntreprise)
+        .then((response) => {
+          this.selectedEntreprise = response.data
+        });
+      }
+      if(this.newResponsable){
+        axios
+        .post("http://localhost/convention/createResponsable.php", this.selectedResponsable)
+        .then((response) => {
+          this.selectedResponsable = response.data
+        });
+      }
       let stage = {
         typeStage: "En entreprise",
         dateDebutEffective: this.selectedPeriode.dateDebut,
@@ -114,6 +136,48 @@ export default {
           console.log(response);
         });
     },
+    createEntreprise(){
+      this.newEntreprise = true
+      this.selectedEntreprise = {
+        rs: "",
+        activite: "",
+        siretSiege: "",
+        numTel: "",
+        numFax: "",
+        siret: "",
+        adresse: "",
+        adresse2: "",
+        ville: "",
+        pays: "FRANCE",
+        numTelLieu: "",
+        numFaxLieu: ""
+      }
+      this.newResponsable = true
+      this.selectedResponsable = {
+        civilite: "",
+        nom: "",
+        prenom: "",
+        fonction: "",
+        email: "",
+        telFixe: "",
+        telPortable: "",
+        idEntreprise: null
+      }
+    },
+    createResponsable(){
+      this.newResponsable = true
+      this.selectedResponsable = {
+        civilite: "",
+        nom: "",
+        prenom: "",
+        fonction: "",
+        email: "",
+        telFixe: "",
+        telPortable: "",
+        adresse:"",
+        idEntreprise: this.selectedEntreprise.idEntreprise
+      }
+    }
   },
   mounted() {
     console.log("launch");
