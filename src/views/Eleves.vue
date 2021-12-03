@@ -5,7 +5,7 @@
       <vue-infinite-autocomplete
         :data-source="elevesOptions"
         @select="handleSelectEleve"
-      ></vue-infinite-autocomplete>
+      />
     </div>
     <div v-if="selectedEleve != null">
       <label>Période</label>
@@ -24,10 +24,13 @@
       <vue-infinite-autocomplete
         :data-source="entrepriseOptions"
         @select="handleSelectEntre"
-      ></vue-infinite-autocomplete>
+      />
       <div v-if="!newEntreprise">
-        <span>Vous ne trouvez pas votre entreprise ?</span
-        ><input type="button" value="Ajouter" @click="createEntreprise()"/>
+        <span>Vous ne trouvez pas votre entreprise ?</span><input
+          type="button"
+          value="Ajouter"
+          @click="createEntreprise()"
+        >
       </div>
       <div v-else>
         <span>FormEntreprise</span>
@@ -38,17 +41,24 @@
       <vue-infinite-autocomplete
         :data-source="responsableOptions"
         @select="handleSelectResp"
-      ></vue-infinite-autocomplete>
+      />
       <div v-if="!newResponsable">
-        <span>Vous ne trouvez pas le responsable ?</span
-        ><input type="button" value="Ajouter" @click="createResponsable()"/>
+        <span>Vous ne trouvez pas le responsable ?</span><input
+          type="button"
+          value="Ajouter"
+          @click="createResponsable()"
+        >
       </div>
       <div v-else>
         <span>FormResp</span>
       </div>
     </div>
     <div v-if="selectedResponsable != null || newResponsable">
-      <input type="button" value="Créer" @click="createStage()" />
+      <input
+        type="button"
+        value="Créer"
+        @click="createStage()"
+      >
     </div>
   </div>
 </template>
@@ -59,6 +69,9 @@ import axios from "axios";
 
 export default {
   name: "Eleves",
+  components: {
+    "vue-infinite-autocomplete": VueInfiniteAutocomplete,
+  },
   data() {
     return {
       eleveId: null,
@@ -80,8 +93,112 @@ export default {
       newEntreprise : false
     };
   },
-  components: {
-    "vue-infinite-autocomplete": VueInfiniteAutocomplete,
+  watch: {
+    eleveId: function () {
+      this.elevesData.forEach((element) => {
+        if (element.idEleve == this.eleveId) {
+          this.selectedEleve = element;
+        }
+      });
+      axios
+        .get("http://localhost/convention/getPeriodes.php", {
+          params: {
+            codeSection: this.selectedEleve.codeSection,
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          this.periodes = response.data;
+        })
+        .catch(function (response) {
+          console.log("FAILURE!!");
+          console.log(response);
+        });
+      axios
+        .get("http://localhost/convention/getEntrepriseList.php")
+        .then((response) => {
+          this.entrepriseData = response.data;
+          this.entrepriseOptions = [];
+          this.entrepriseData.forEach((element) => {
+            let option = {
+              text:
+                element.raisonSociale +
+                " - " +
+                element.adresse +
+                " " +
+                element.adresse2,
+              id: element.idEntreprise,
+            };
+            this.entrepriseOptions.push(option);
+          });
+        })
+        .catch(function (response) {
+          console.log("FAILURE!!");
+          console.log(response);
+        });
+    },
+    entrepriseId: function () {
+      this.entrepriseData.forEach((element) => {
+        if (element.idEntreprise == this.entrepriseId) {
+          this.selectedEntreprise = element;
+        }
+      });
+      axios
+        .get("http://localhost/convention/getRespList.php", {
+          params: {
+            idEntre: this.selectedEntreprise.idEntreprise,
+          },
+        })
+        .then((response) => {
+          this.responsableData = response.data;
+          this.responsableOptions = [];
+          this.responsableData.forEach((element) => {
+            let option = {
+              text: element.civilite + " " + element.nom + " " + element.prenom,
+              id: element.idResponsable,
+            };
+            this.responsableOptions.push(option);
+          });
+        })
+        .catch(function (response) {
+          console.log("FAILURE!!");
+          console.log(response);
+        });
+    },
+    responsableId: function () {
+      this.responsableData.forEach((element) => {
+        if (element.idResponsable == this.responsableId) {
+          this.selectedResponsable = element;
+        }
+      });
+    },
+    selectedPeriodeId: function () {
+      this.periodes.forEach((element) => {
+        if (element.idPeriode == this.selectedPeriodeId) {
+          this.selectedPeriode = element;
+        }
+      });
+    },
+  },
+  mounted() {
+    console.log("launch");
+    axios
+      .get("http://localhost/convention/getElevesList.php")
+      .then((response) => {
+        this.elevesData = response.data;
+        this.elevesOptions = [];
+        this.elevesData.forEach((element) => {
+          let option = {
+            text: element.nom + " " + element.prenom,
+            id: element.idEleve,
+          };
+          this.elevesOptions.push(option);
+        });
+      })
+      .catch(function (response) {
+        console.log("FAILURE!!");
+        console.log(response);
+      });
   },
   methods: {
     handleSelectEleve(selectedValue) {
@@ -178,113 +295,6 @@ export default {
         idEntreprise: this.selectedEntreprise.idEntreprise
       }
     }
-  },
-  mounted() {
-    console.log("launch");
-    axios
-      .get("http://localhost/convention/getElevesList.php")
-      .then((response) => {
-        this.elevesData = response.data;
-        this.elevesOptions = [];
-        this.elevesData.forEach((element) => {
-          let option = {
-            text: element.nom + " " + element.prenom,
-            id: element.idEleve,
-          };
-          this.elevesOptions.push(option);
-        });
-      })
-      .catch(function (response) {
-        console.log("FAILURE!!");
-        console.log(response);
-      });
-  },
-  watch: {
-    eleveId: function () {
-      this.elevesData.forEach((element) => {
-        if (element.idEleve == this.eleveId) {
-          this.selectedEleve = element;
-        }
-      });
-      axios
-        .get("http://localhost/convention/getPeriodes.php", {
-          params: {
-            codeSection: this.selectedEleve.codeSection,
-          },
-        })
-        .then((response) => {
-          console.log(response);
-          this.periodes = response.data;
-        })
-        .catch(function (response) {
-          console.log("FAILURE!!");
-          console.log(response);
-        });
-      axios
-        .get("http://localhost/convention/getEntrepriseList.php")
-        .then((response) => {
-          this.entrepriseData = response.data;
-          this.entrepriseOptions = [];
-          this.entrepriseData.forEach((element) => {
-            let option = {
-              text:
-                element.raisonSociale +
-                " - " +
-                element.adresse +
-                " " +
-                element.adresse2,
-              id: element.idEntreprise,
-            };
-            this.entrepriseOptions.push(option);
-          });
-        })
-        .catch(function (response) {
-          console.log("FAILURE!!");
-          console.log(response);
-        });
-    },
-    entrepriseId: function () {
-      this.entrepriseData.forEach((element) => {
-        if (element.idEntreprise == this.entrepriseId) {
-          this.selectedEntreprise = element;
-        }
-      });
-      axios
-        .get("http://localhost/convention/getRespList.php", {
-          params: {
-            idEntre: this.selectedEntreprise.idEntreprise,
-          },
-        })
-        .then((response) => {
-          this.responsableData = response.data;
-          this.responsableOptions = [];
-          this.responsableData.forEach((element) => {
-            let option = {
-              text: element.civilite + " " + element.nom + " " + element.prenom,
-              id: element.idResponsable,
-            };
-            this.responsableOptions.push(option);
-          });
-        })
-        .catch(function (response) {
-          console.log("FAILURE!!");
-          console.log(response);
-        });
-    },
-    responsableId: function () {
-      this.responsableData.forEach((element) => {
-        if (element.idResponsable == this.responsableId) {
-          this.selectedResponsable = element;
-        }
-      });
-    },
-    selectedPeriodeId: function () {
-      this.periodes.forEach((element) => {
-        if (element.idPeriode == this.selectedPeriodeId) {
-          this.selectedPeriode = element;
-        }
-      });
-    },
   },
 };
 </script>

@@ -1,9 +1,15 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/eleves">Eleves</router-link> |
-      <router-link to="/profs">Professeurs référents</router-link> |
-      <router-link to="/admin">Administration</router-link>
+      <router-link to="/eleves">
+        Eleves
+      </router-link> |
+      <router-link to="/profs">
+        Professeurs référents
+      </router-link> |
+      <router-link to="/admin">
+        Administration
+      </router-link>
     </div>
     <router-view />
   </div>

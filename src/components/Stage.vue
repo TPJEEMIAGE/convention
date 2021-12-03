@@ -54,8 +54,14 @@
       </table>
     </div>
     <div class="row justify-content-center pad">
-      <h4 class="col">Valider ?</h4>
-      <input class="col" v-model="validated" type="checkbox" />
+      <h4 class="col">
+        Valider ?
+      </h4>
+      <input
+        v-model="validated"
+        class="col"
+        type="checkbox"
+      >
     </div>
   </div>
 </template>
@@ -66,7 +72,10 @@ import axios from "axios";
 export default {
   name: "Stage",
   props: {
-    stageData: Object,
+    stageData: {
+      type: Object,
+      required: true
+    },
     validated: Boolean,
   },
   watch: {

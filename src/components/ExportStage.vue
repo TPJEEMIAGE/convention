@@ -2,21 +2,37 @@
   <div class="export">
     <div>
       <label>Exporter depuis cette date :</label>
-      <input type="date" v-model="critere.date"/>
+      <input
+        v-model="critere.date"
+        type="date"
+      >
     </div>
     <div>
       <label>Inclure les stages non-validés ?</label>
-      <input type="checkbox" v-model="critere.nonValid"/>
+      <input
+        v-model="critere.nonValid"
+        type="checkbox"
+      >
     </div>
     <div>
       <label>Inclure les stages déja exportés ?</label>
-      <input type="checkbox" v-model="critere.alryExport"/>
+      <input
+        v-model="critere.alryExport"
+        type="checkbox"
+      >
     </div>
     <div>
       <label>Inclure les stages dont la convention entreprise est déjà signée ?</label>
-      <input type="checkbox" v-model="critere.convEntre"/>
+      <input
+        v-model="critere.convEntre"
+        type="checkbox"
+      >
     </div>
-    <input type="button" value="Exporter" @click="doExport" />
+    <input
+      type="button"
+      value="Exporter"
+      @click="doExport"
+    >
   </div>
 </template>
 

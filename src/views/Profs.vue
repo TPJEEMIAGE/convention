@@ -37,7 +37,10 @@
       </select>
     </div>
     <div v-if="selectedStage != null">
-      <Stage :stageData="selectedStage" :validated="validatedStage" />
+      <Stage
+        :stage-data="selectedStage"
+        :validated="validatedStage"
+      />
     </div>
   </div>
 </template>
@@ -62,17 +65,6 @@ export default {
       selectedStage: null,
       validatedStage: null,
     };
-  },
-  mounted() {
-    axios
-      .get("http://localhost/convention/getSectionList.php")
-      .then((response) => {
-        this.listSection = response.data;
-      })
-      .catch(function (response) {
-        console.log("FAILURE!!");
-        console.log(response);
-      });
   },
   watch: {
     selectedSection: function () {
@@ -119,6 +111,17 @@ export default {
         this.validatedStage = false;
       }
     },
+  },
+  mounted() {
+    axios
+      .get("http://localhost/convention/getSectionList.php")
+      .then((response) => {
+        this.listSection = response.data;
+      })
+      .catch(function (response) {
+        console.log("FAILURE!!");
+        console.log(response);
+      });
   },
 };
 </script>

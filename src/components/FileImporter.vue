@@ -2,15 +2,21 @@
   <div class="container">
     <div>
       <label>Fichiers d'imports </label>
-      <br />
-      <br />
+      <br>
+      <br>
       <label>Attention : L'import peut prendre plusieurs minutes </label>
-      <br />
-      <br />
-      <input type="file" multiple @change="handleFileUploads($event)" />
-      <br />
-      <br />
-      <button v-on:click="submitFiles()">Importer</button>
+      <br>
+      <br>
+      <input
+        type="file"
+        multiple
+        @change="handleFileUploads($event)"
+      >
+      <br>
+      <br>
+      <button @click="submitFiles()">
+        Importer
+      </button>
     </div>
   </div>
 </template>
