@@ -21,36 +21,176 @@
     </div>
     <div v-if="selectedEleve != null">
       <label>Entreprise</label>
-      <vue-infinite-autocomplete
-        :data-source="entrepriseOptions"
-        @select="handleSelectEntre"
-      />
       <div v-if="!newEntreprise">
+        <vue-infinite-autocomplete
+          :data-source="entrepriseOptions"
+          @select="handleSelectEntre"
+        />
         <span>Vous ne trouvez pas votre entreprise ?</span><input
           type="button"
           value="Ajouter"
           @click="createEntreprise()"
         >
       </div>
-      <div v-else>
-        <span>FormEntreprise</span>
+      <div
+        v-else
+        class="formclass"
+      >
+        <div>
+          <label>Raison Sociale</label>
+          <input
+            v-model="selectedEntreprise.rs"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Activité</label>
+          <input
+            v-model="selectedEntreprise.activite"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Siret du Siège</label>
+          <input
+            v-model="selectedEntreprise.siretSiege"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Numéro de téléphone du Siège</label>
+          <input
+            v-model="selectedEntreprise.numTel"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Numéro de fax du Siège</label>
+          <input
+            v-model="selectedEntreprise.numFax"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Siret</label>
+          <input
+            v-model="selectedEntreprise.siret"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Adresse</label>
+          <input
+            v-model="selectedEntreprise.adresse"
+            type="text"
+          >
+          <input
+            v-model="selectedEntreprise.adresse2"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Ville</label>
+          <input
+            v-model="selectedEntreprise.ville"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Pays</label>
+          <input
+            v-model="selectedEntreprise.pays"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Numéro de téléphone</label>
+          <input
+            v-model="selectedEntreprise.numTelLieu"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Numéro de fax</label>
+          <input
+            v-model="selectedEntreprise.numFaxLieu"
+            type="text"
+          >
+        </div>
       </div>
     </div>
     <div v-if="selectedEntreprise != null">
       <label>Responsable</label>
-      <vue-infinite-autocomplete
-        :data-source="responsableOptions"
-        @select="handleSelectResp"
-      />
       <div v-if="!newResponsable">
+        <vue-infinite-autocomplete
+          :data-source="responsableOptions"
+          @select="handleSelectResp"
+        />
         <span>Vous ne trouvez pas le responsable ?</span><input
           type="button"
           value="Ajouter"
           @click="createResponsable()"
         >
       </div>
-      <div v-else>
-        <span>FormResp</span>
+      <div
+        v-else
+        class="formclass"
+      >
+        <div>
+          <label>Civilité</label>
+          <select
+            v-model="selectedResponsable.civilite"
+          >
+            <option value="M.">
+              M.
+            </option>
+            <option value="Mme.">
+              Mme.
+            </option>
+          </select>
+        </div>
+        <div>
+          <label>Nom</label>
+          <input
+            v-model="selectedResponsable.nom"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Prenom</label>
+          <input
+            v-model="selectedResponsable.prenom"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Fonction</label>
+          <input
+            v-model="selectedResponsable.fonction"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Email</label>
+          <input
+            v-model="selectedResponsable.email"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Téléphone fixe</label>
+          <input
+            v-model="selectedResponsable.telFixe"
+            type="text"
+          >
+        </div>
+        <div>
+          <label>Téléphone portable</label>
+          <input
+            v-model="selectedResponsable.telPortable"
+            type="text"
+          >
+        </div>
       </div>
     </div>
     <div v-if="selectedResponsable != null || newResponsable">
@@ -100,8 +240,9 @@ export default {
           this.selectedEleve = element;
         }
       });
+      console.log(this.selectedEleve);
       axios
-        .get("http://localhost/convention/getPeriodes.php", {
+        .get(this.$wsServer + "getPeriodes.php", {
           params: {
             codeSection: this.selectedEleve.codeSection,
           },
@@ -115,7 +256,7 @@ export default {
           console.log(response);
         });
       axios
-        .get("http://localhost/convention/getEntrepriseList.php")
+        .get(this.$wsServer + "getEntrepriseList.php")
         .then((response) => {
           this.entrepriseData = response.data;
           this.entrepriseOptions = [];
@@ -144,7 +285,7 @@ export default {
         }
       });
       axios
-        .get("http://localhost/convention/getRespList.php", {
+        .get(this.$wsServer + "getRespList.php", {
           params: {
             idEntre: this.selectedEntreprise.idEntreprise,
           },
@@ -183,7 +324,7 @@ export default {
   mounted() {
     console.log("launch");
     axios
-      .get("http://localhost/convention/getElevesList.php")
+      .get(this.$wsServer + "getElevesList.php")
       .then((response) => {
         this.elevesData = response.data;
         this.elevesOptions = [];
@@ -201,6 +342,45 @@ export default {
       });
   },
   methods: {
+    async doCreateEntreprise(){
+      return await axios
+        .post(this.$wsServer + "createEntreprise.php", this.selectedEntreprise)
+        .then((response) => {
+          console.log(response.data)
+          this.selectedEntreprise = response.data[0]
+        })
+    },
+    async doCreateResponsable(){
+      this.selectedResponsable.idEntreprise = this.selectedEntreprise.idEntreprise
+       return await axios
+        .post(this.$wsServer + "createResponsable.php", this.selectedResponsable)
+        .then((response) => {
+          console.log(response)
+          this.selectedResponsable = response.data
+        })
+    },
+    doCreateStage(){
+      let stage = {
+          typeStage: "En entreprise",
+          dateDebutEffective: this.selectedPeriode.dateDebut,
+          dateFinEffective: this.selectedPeriode.dateFin,
+          convEleve: 1,
+          convEntre: 0,
+          description: "",
+          codeSection: this.selectedEleve.codeSection,
+          annee: "2021-2022",
+          idEleve: this.selectedEleve.idEleve,
+          idEntreprise: this.selectedEntreprise.idEntreprise,
+          idPeriode: this.selectedPeriodeId,
+          idResponsable: this.selectedResponsable.idResponsable,
+        };
+        console.log(stage);
+        axios
+          .post(this.$wsServer + "createStage.php", stage)
+          .then((response) => {
+            console.log(response);
+          })
+    },
     handleSelectEleve(selectedValue) {
       console.log("selected Eleve: ", selectedValue);
       this.eleveId = selectedValue.id;
@@ -217,41 +397,19 @@ export default {
       console.log("selected Resp: ", selectedValue);
       this.responsableId = selectedValue.id;
     },
-    createStage() {
+    async createStage() {
       if(this.newEntreprise){
-        axios
-        .post("http://localhost/convention/createEnterprise.php", this.selectedEntreprise)
-        .then((response) => {
-          this.selectedEntreprise = response.data
-        });
+        await this.doCreateEntreprise()
+        await this.doCreateResponsable()
+        this.doCreateStage()
       }
-      if(this.newResponsable){
-        axios
-        .post("http://localhost/convention/createResponsable.php", this.selectedResponsable)
-        .then((response) => {
-          this.selectedResponsable = response.data
-        });
+      else if(this.newResponsable){
+        await this.doCreateResponsable()
+        this.doCreateStage()
       }
-      let stage = {
-        typeStage: "En entreprise",
-        dateDebutEffective: this.selectedPeriode.dateDebut,
-        dateFinEffective: this.selectedPeriode.dateFin,
-        convEleve: 1,
-        convEntre: 0,
-        description: "",
-        codeSection: this.selectedEleve.codeSection,
-        annee: "2021-2022",
-        idEleve: this.selectedEleve.idEleve,
-        idEntreprise: this.selectedEntreprise.idEntreprise,
-        idPeriode: this.selectedPeriodeId,
-        idResponsable: this.selectedResponsable.idResponsable,
-      };
-      console.log(stage);
-      axios
-        .post("http://localhost/convention/createStage.php", stage)
-        .then((response) => {
-          console.log(response);
-        });
+      else{
+        this.doCreateStage()
+      }
     },
     createEntreprise(){
       this.newEntreprise = true
@@ -291,7 +449,7 @@ export default {
         email: "",
         telFixe: "",
         telPortable: "",
-        adresse:"",
+        adresse:"adresse",
         idEntreprise: this.selectedEntreprise.idEntreprise
       }
     }
@@ -301,6 +459,25 @@ export default {
 
 <style scoped>
 div {
-  margin: 20px 10%;
+  margin: 20px 20px;
+}
+.formclass{
+  width:100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.formclass div{
+  width: 50%;
+  margin: 0 0;
+  padding:10px 10px
+}
+.formclass div label{
+  display: block;
+}
+.formclass div input{
+  width: 100%;
+}
+.formclass div select{
+  width: 100%;
 }
 </style>

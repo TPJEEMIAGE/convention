@@ -72,7 +72,7 @@ export default {
       this.selectedStage = null;
       this.selectedStageId = null;
       axios
-        .get("http://localhost/convention/getRefList.php", {
+        .get(this.$wsServer + "getRefList.php", {
           params: { secId: this.selectedSection },
         })
         .then((response) => {
@@ -87,7 +87,7 @@ export default {
       this.selectedStageId = null;
       this.selectedStage = null;
       axios
-        .get("http://localhost/convention/getStageList.php", {
+        .get(this.$wsServer + "getStageList.php", {
           params: { secId: this.selectedSection, profId: this.selectedProf },
         })
         .then((response) => {
@@ -114,7 +114,7 @@ export default {
   },
   mounted() {
     axios
-      .get("http://localhost/convention/getSectionList.php")
+      .get(this.$wsServer + "getSectionList.php")
       .then((response) => {
         this.listSection = response.data;
       })

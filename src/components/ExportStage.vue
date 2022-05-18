@@ -33,6 +33,14 @@
       value="Exporter"
       @click="doExport"
     >
+    <div>
+      <a 
+        v-if="exported" 
+        :href="link"
+      >
+        Télécharger l'export
+      </a>
+    </div>
   </div>
 </template>
 
@@ -47,31 +55,22 @@ export default {
         nonValid: false,
         alryExport: false,
         convEntre: false
-      }
+      },
+      exported: false,
+      link: null
     }
   },
   methods: {
     doExport: function () {
       if(this.critere.date){
-      axios
-        .post("http://localhost/convention/exportStage.php",this.critere)
-        .then(function (response) {
-          console.log(response);
-          axios.get("http://localhost/convention/export.csv")
-          .then(function (responseFile){
-            var fileURL = window.URL.createObjectURL(new Blob([responseFile.data]));
-            var fileLink = document.createElement('a');
-
-            fileLink.href = fileURL;
-            fileLink.setAttribute('download', 'export.csv');
-            document.body.appendChild(fileLink);
-
-            fileLink.click();
+        axios
+          .post(this.$wsServer + "exportStage.php",this.critere)
+          .then(() => {
+            this.link = this.$wsServer + "export.csv"
+            this.exported = true
           })
-          .catch(function () {})
-        })
-        .catch(function () {});
-    }
+          .catch(function () {});
+      }
     },
     
   },

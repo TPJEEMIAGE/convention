@@ -85,7 +85,7 @@ export default {
         dateVal = "cancel";
       }
       axios
-        .get("http://localhost/convention/checkStage.php", {
+        .get(this.$wsServer + "checkStage.php", {
           params: { idStage: this.stageData.idStage, dateVal: dateVal },
         })
         .then(function () {})

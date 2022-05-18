@@ -43,7 +43,7 @@ export default {
         formData.append("files[" + i + "]", file);
       }
       axios
-        .post("http://localhost/convention/uploadData.php", formData, {
+        .post(this.$wsServer + "uploadData.php", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
